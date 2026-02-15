@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>MedApp - Companii</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>body { padding-top: 60px; }</style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="/">MedApp</a>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link active" href="companies.html">Companii</a></li>
+        <li class="nav-item"><a class="nav-link" href="employees.html">Angajați</a></li>
+        <li class="nav-item"><a class="nav-link" href="aptitude.html">Fise Aptitudini</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-primary">Gestionare Companii</h2>
+
+    <!-- Formular Adăugare -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">Adaugă Companie Nouă</div>
+        <div class="card-body">
+            <form id="addCompanyForm" class="row g-3">
+                <div class="col-md-6">
+                    <label for="name" class="form-label">Nume Companie</label>
+                    <input type="text" class="form-control" id="name" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="cui" class="form-label">CUI / CIF</label>
+                    <input type="text" class="form-control" id="cui" required>
+                </div>
+                <div class="col-12">
+                    <label for="address" class="form-label">Adresa</label>
+                    <input type="text" class="form-control" id="address">
+                </div>
+                <div class="col-md-6">
+                    <label for="phone" class="form-label">Telefon</label>
+                    <input type="text" class="form-control" id="phone">
+                </div>
+                <div class="col-md-6">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email">
+                </div>
+                <div class="col-12 text-end">
+                    <button type="submit" class="btn btn-success">Salvează Companie</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Lista Companii -->
+    <div class="card">
+        <div class="card-header">Companii Existente</div>
+        <div class="card-body">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nume</th>
+                        <th>CUI</th>
+                        <th>Adresa</th>
+                        <th>Contact</th>
+                    </tr>
+                </thead>
+                <tbody id="companiesTableBody">
+                    <!-- Datele vor fi populate aici via JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_URL = '/api/companies';
+
+    // Fetch and display companies
+    async function fetchCompanies() {
+        try {
+            const response = await fetch(API_URL);
+            const companies = await response.json();
+            const tableBody = document.getElementById('companiesTableBody');
+            tableBody.innerHTML = '';
+
+            companies.forEach(company => {
+                const row = `
+                    <tr>
+                        <td>${company.id}</td>
+                        <td><strong>${company.name}</strong></td>
+                        <td>${company.cui}</td>
+                        <td>${company.address || '-'}</td>
+                        <td>${company.phone || '-'} <br> <small>${company.email || ''}</small></td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        } catch (error) {
+            console.error('Error fetching companies:', error);
+            alert('Nu s-au putut încărca companiile.');
+        }
+    }
+
+    // Add new company
+    document.getElementById('addCompanyForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const companyData = {
+            name: document.getElementById('name').value,
+            cui: document.getElementById('cui').value,
+            address: document.getElementById('address').value,
+            phone: document.getElementById('phone').value,
+            email: document.getElementById('email').value
+        };
+
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(companyData)
+            });
+
+            if (response.ok) {
+                alert('Companie adăugată cu succes!');
+                document.getElementById('addCompanyForm').reset();
+                fetchCompanies();
+            } else {
+                alert('Eroare la adăugarea companiei.');
+            }
+        } catch (error) {
+            console.error('Error adding company:', error);
+        }
+    });
+
+    // Initial load
+    fetchCompanies();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

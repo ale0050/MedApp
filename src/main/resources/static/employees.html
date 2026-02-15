@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>MedApp - Angajați</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>body { padding-top: 60px; }</style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="/">MedApp</a>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link" href="companies.html">Companii</a></li>
+        <li class="nav-item"><a class="nav-link active" href="employees.html">Angajați</a></li>
+        <li class="nav-item"><a class="nav-link" href="aptitude.html">Fise Aptitudini</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-success">Gestionare Angajați</h2>
+
+    <!-- Formular Adăugare -->
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white">Adaugă Angajat Nou</div>
+        <div class="card-body">
+            <form id="addEmployeeForm" class="row g-3">
+                <div class="col-md-6">
+                    <label for="firstName" class="form-label">Prenume</label>
+                    <input type="text" class="form-control" id="firstName" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="lastName" class="form-label">Nume</label>
+                    <input type="text" class="form-control" id="lastName" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="cnp" class="form-label">CNP</label>
+                    <input type="text" class="form-control" id="cnp" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="position" class="form-label">Funcție</label>
+                    <input type="text" class="form-control" id="position">
+                </div>
+                <div class="col-md-6">
+                    <label for="companySelect" class="form-label">Companie</label>
+                    <select id="companySelect" class="form-select" required>
+                        <option selected disabled value="">Alege Compania...</option>
+                        <!-- Va fi populat via JS -->
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="phone" class="form-label">Telefon</label>
+                    <input type="text" class="form-control" id="phone">
+                </div>
+                <div class="col-12 text-end">
+                    <button type="submit" class="btn btn-success">Salvează Angajat</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Lista Angajați -->
+    <div class="card">
+        <div class="card-header">
+            Angajați Existenți
+            <button class="btn btn-sm btn-outline-primary float-end" onclick="fetchEmployees()">Actualizează</button>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nume Complet</th>
+                        <th>CNP</th>
+                        <th>Funcție</th>
+                        <th>Companie</th>
+                    </tr>
+                </thead>
+                <tbody id="employeesTableBody">
+                    <!-- Datele vor fi populate aici via JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_EMPLOYEES = '/api/employees';
+    const API_COMPANIES = '/api/companies';
+
+    // Populate companies dropdown
+    async function loadCompanies() {
+        try {
+            const response = await fetch(API_COMPANIES);
+            const companies = await response.json();
+            const select = document.getElementById('companySelect');
+            companies.forEach(company => {
+                const option = document.createElement('option');
+                option.value = company.id;
+                option.textContent = company.name;
+                select.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Error loading companies:', error);
+        }
+    }
+
+    // Fetch and display employees
+    async function fetchEmployees() {
+        try {
+            const response = await fetch(API_EMPLOYEES);
+            const employees = await response.json();
+            const tableBody = document.getElementById('employeesTableBody');
+            tableBody.innerHTML = '';
+
+            employees.forEach(emp => {
+                const companyName = emp.company ? emp.company.name : '<span class="text-muted">Fără companie</span>';
+                const row = `
+                    <tr>
+                        <td>${emp.id}</td>
+                        <td><strong>${emp.firstname} ${emp.lastname}</strong></td>
+                        <td>${emp.cnp}</td>
+                        <td>${emp.position || '-'}</td>
+                        <td>${companyName}</td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        } catch (error) {
+            console.error('Error fetching employees:', error);
+            alert('Nu s-au putut încărca angajații.');
+        }
+    }
+
+    // Add new employee
+    document.getElementById('addEmployeeForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const companyId = document.getElementById('companySelect').value;
+        const employeeData = {
+            firstname: document.getElementById('firstName').value,
+            lastname: document.getElementById('lastName').value,
+            cnp: document.getElementById('cnp').value,
+            position: document.getElementById('position').value,
+            phone: document.getElementById('phone').value,
+            company: { id: companyId } // Trimit doar ID-ul companiei
+        };
+
+        try {
+            const response = await fetch(API_EMPLOYEES, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(employeeData)
+            });
+
+            if (response.ok) {
+                alert('Angajat adăugat cu succes!');
+                document.getElementById('addEmployeeForm').reset();
+                fetchEmployees();
+            } else {
+                alert('Eroare la adăugarea angajatului.');
+            }
+        } catch (error) {
+            console.error('Error adding employee:', error);
+        }
+    });
+
+    // Initial load
+    loadCompanies();
+    fetchEmployees();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
