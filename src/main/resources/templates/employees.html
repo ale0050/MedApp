@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ro">
+<html lang="ro" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>MedApp - Angajați</title>
@@ -12,10 +12,23 @@
   <div class="container">
     <a class="navbar-brand" href="/">MedApp</a>
     <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" href="/companies.html">Companii</a></li>
+        <li class="nav-item"><a class="nav-link active" href="/employees.html">Angajați</a></li>
+        <li class="nav-item"><a class="nav-link" href="/aptitude.html">Fise Aptitudini</a></li>
+      </ul>
       <ul class="navbar-nav">
-        <li class="nav-item"><a class="nav-link" href="companies.html">Companii</a></li>
-        <li class="nav-item"><a class="nav-link active" href="employees.html">Angajați</a></li>
-        <li class="nav-item"><a class="nav-link" href="aptitude.html">Fise Aptitudini</a></li>
+        <li class="nav-item" sec:authorize="isAuthenticated()">
+          <span class="nav-link text-white" th:text="'Salut, ' + ${#authentication.name}"></span>
+        </li>
+        <li class="nav-item" sec:authorize="isAnonymous()">
+          <a class="btn btn-outline-light ms-2" href="/login.html">Login</a>
+        </li>
+        <li class="nav-item" sec:authorize="isAuthenticated()">
+          <form th:action="@{/perform_logout}" method="post" class="d-inline">
+            <button type="submit" class="btn btn-outline-light ms-2">Logout</button>
+          </form>
+        </li>
       </ul>
     </div>
   </div>
@@ -96,6 +109,10 @@
     async function loadCompanies() {
         try {
             const response = await fetch(API_COMPANIES);
+            if (response.status === 401) { // Unauthorized
+                window.location.href = '/login.html';
+                return;
+            }
             const companies = await response.json();
             const select = document.getElementById('companySelect');
             companies.forEach(company => {
@@ -113,6 +130,10 @@
     async function fetchEmployees() {
         try {
             const response = await fetch(API_EMPLOYEES);
+            if (response.status === 401) { // Unauthorized
+                window.location.href = '/login.html';
+                return;
+            }
             const employees = await response.json();
             const tableBody = document.getElementById('employeesTableBody');
             tableBody.innerHTML = '';
@@ -161,6 +182,10 @@
                 alert('Angajat adăugat cu succes!');
                 document.getElementById('addEmployeeForm').reset();
                 fetchEmployees();
+            } else if (response.status === 401) { // Unauthorized
+                window.location.href = '/login.html';
+            } else if (response.status === 403) { // Forbidden
+                alert('Nu aveți permisiunea de a adăuga angajați.');
             } else {
                 alert('Eroare la adăugarea angajatului.');
             }
