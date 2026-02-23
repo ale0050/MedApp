@@ -2,99 +2,95 @@
 <html lang="ro" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>MedApp - Fise Aptitudini</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedApp - Fișe de Aptitudine</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>body { padding-top: 60px; }</style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body { padding-top: 70px; background-color: #f8f9fa; }
+        .card-fisa { border-top: 5px solid #dc3545; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .badge-apt { background-color: #198754; color: white; }
+        .badge-cond { background-color: #ffc107; color: #000; }
+        .badge-inapt { background-color: #dc3545; color: white; }
+    </style>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
   <div class="container">
-    <a class="navbar-brand" href="/">MedApp</a>
+    <a class="navbar-brand d-flex align-items-center" href="/"><i class="bi bi-heart-pulse-fill text-danger me-2"></i> MedApp</a>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto">
         <li class="nav-item"><a class="nav-link" href="/companies.html">Companii</a></li>
         <li class="nav-item"><a class="nav-link" href="/employees.html">Angajați</a></li>
-        <li class="nav-item"><a class="nav-link active" href="/aptitude.html">Fise Aptitudini</a></li>
-      </ul>
-      <ul class="navbar-nav">
-        <li class="nav-item" sec:authorize="isAuthenticated()">
-          <span class="nav-link text-white" th:text="'Salut, ' + ${#authentication.name}"></span>
-        </li>
-        <li class="nav-item" sec:authorize="isAnonymous()">
-          <a class="btn btn-outline-light ms-2" href="/login.html">Login</a>
-        </li>
-        <li class="nav-item" sec:authorize="isAuthenticated()">
-          <form th:action="@{/perform_logout}" method="post" class="d-inline">
-            <button type="submit" class="btn btn-outline-light ms-2">Logout</button>
-          </form>
-        </li>
+        <li class="nav-item"><a class="nav-link active" href="/aptitude.html">Fișe Aptitudini</a></li>
       </ul>
     </div>
   </div>
 </nav>
 
 <div class="container mt-4">
-    <h2 class="mb-4 text-danger">Fise Aptitudini Medicale</h2>
-
-    <!-- Formular Creare Fisa -->
-    <div class="card mb-4">
-        <div class="card-header bg-danger text-white">Creează Fisa Nouă</div>
-        <div class="card-body">
-            <form id="createSheetForm" class="row g-3">
-                <div class="col-md-6">
-                    <label for="employeeSelect" class="form-label">Angajat</label>
-                    <select id="employeeSelect" class="form-select" required>
-                        <option selected disabled value="">Alege Angajatul...</option>
-                        <!-- Va fi populat via JS -->
-                    </select>
+    <div class="row">
+        <div class="col-md-5">
+            <div class="card card-fisa mb-4">
+                <div class="card-header bg-white py-3"><h5 class="card-title mb-0 text-danger"><i class="bi bi-file-earmark-plus me-2"></i>Emitere Fișă Nouă</h5></div>
+                <div class="card-body">
+                    <form id="createSheetForm">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Selectați Angajatul</label>
+                            <select id="employeeSelect" class="form-select" required><option value="">Alege...</option></select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Tip Examinare</label>
+                            <select id="examType" class="form-select" required>
+                                <option value="Angajare">Angajare</option>
+                                <option value="Control Medical Periodic">Control Medical Periodic</option>
+                                <option value="Reluare a muncii">Reluare a muncii</option>
+                                <option value="Supraveghere Medicală">Supraveghere Medicală</option>
+                                <option value="Alte">Alte</option>
+                            </select>
+                        </div>
+                        <div class="row g-3 mb-3">
+                            <div class="col-6">
+                                <label class="form-label fw-bold">Data Examinării</label>
+                                <input type="date" class="form-control" id="examDate" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-bold">Expira la</label>
+                                <input type="date" class="form-control" id="nextExamDate">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Concluzie Medicală</label>
+                            <select id="conclusion" class="form-select" required>
+                                <option value="APT">APT</option>
+                                <option value="APT CONDITIONAT">APT CONDIȚIONAT</option>
+                                <option value="INAPT CONDITIONAT">INAPT CONDIȚIONAT</option>
+                                <option value="INAPT">INAPT</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Recomandări</label>
+                            <textarea class="form-control" id="observations" rows="2"></textarea>
+                        </div>
+                        <div class="d-grid"><button type="submit" class="btn btn-danger btn-lg">Salvează și Emite</button></div>
+                    </form>
                 </div>
-                <div class="col-md-6">
-                    <label for="examDate" class="form-label">Data Examinarii</label>
-                    <input type="date" class="form-control" id="examDate" required>
-                </div>
-                <div class="col-md-6">
-                    <label for="nextExamDate" class="form-label">Urmatoarea Examinare (Optional)</label>
-                    <input type="date" class="form-control" id="nextExamDate">
-                </div>
-                <div class="col-md-6">
-                    <label for="conclusion" class="form-label">Concluzia Medicala</label>
-                    <select id="conclusion" class="form-select" required>
-                        <option value="APT">APT</option>
-                        <option value="APT CONDITIONAT">APT CONDITIONAT</option>
-                        <option value="INAPT TEMPORAR">INAPT TEMPORAR</option>
-                        <option value="INAPT PERMANENT">INAPT PERMANENT</option>
-                    </select>
-                </div>
-                <div class="col-12">
-                    <label for="observations" class="form-label">Observatii</label>
-                    <textarea class="form-control" id="observations" rows="2"></textarea>
-                </div>
-                <div class="col-12 text-end">
-                    <button type="submit" class="btn btn-danger">Salvează Fisa</button>
-                </div>
-            </form>
+            </div>
         </div>
-    </div>
 
-    <!-- Lista Fise -->
-    <div class="card">
-        <div class="card-header">Fise Emitere</div>
-        <div class="card-body">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Angajat</th>
-                        <th>Data Examen</th>
-                        <th>Concluzie</th>
-                        <th>Actiuni</th>
-                    </tr>
-                </thead>
-                <tbody id="sheetsTableBody">
-                    <!-- Datele vor fi populate aici via JS -->
-                </tbody>
-            </table>
+        <div class="col-md-7">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white py-3"><h5>Fișe Emise</h5></div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead><tr><th class="ps-3">Nr.</th><th>Angajat</th><th>Tip</th><th>Data</th><th>Concluzie</th><th>PDF</th></tr></thead>
+                            <tbody id="sheetsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -102,109 +98,89 @@
 <script>
     const API_SHEETS = '/api/aptitude-sheets';
     const API_EMPLOYEES = '/api/employees';
+    document.getElementById('examDate').valueAsDate = new Date();
 
-    // Populate employees dropdown
     async function loadEmployees() {
         try {
-            const response = await fetch(API_EMPLOYEES);
-            if (response.status === 401) { // Unauthorized
-                window.location.href = '/login.html';
-                return;
-            }
-            const employees = await response.json();
+            const res = await fetch(API_EMPLOYEES);
+            const data = await res.json();
             const select = document.getElementById('employeeSelect');
-            employees.forEach(emp => {
-                const option = document.createElement('option');
-                option.value = emp.id;
-                option.textContent = `${emp.firstname} ${emp.lastname} (${emp.cnp})`;
-                select.appendChild(option);
+            data.forEach(e => {
+                const opt = document.createElement('option');
+                opt.value = e.id;
+                opt.textContent = `${e.firstname} ${e.lastname} (${e.cnp || ''})`;
+                select.appendChild(opt);
             });
-        } catch (error) {
-            console.error('Error loading employees:', error);
-        }
+        } catch(err) { console.error(err); }
     }
 
-    // Fetch and display sheets
     async function fetchSheets() {
         try {
-            const response = await fetch(API_SHEETS);
-            if (response.status === 401) { // Unauthorized
-                window.location.href = '/login.html';
-                return;
-            }
-            const sheets = await response.json();
-            const tableBody = document.getElementById('sheetsTableBody');
-            tableBody.innerHTML = '';
-
-            sheets.forEach(sheet => {
-                const empName = sheet.employee ? `<strong>${sheet.employee.firstname} ${sheet.employee.lastname}</strong>` : 'Angajat Șters';
-                
-                const row = `
+            const res = await fetch(API_SHEETS);
+            const data = await res.json();
+            const body = document.getElementById('sheetsTableBody');
+            body.innerHTML = '';
+            data.sort((a,b) => b.id - a.id).forEach(s => {
+                body.innerHTML += `
                     <tr>
-                        <td>${sheet.id}</td>
-                        <td>${empName}</td>
-                        <td>${sheet.examDate}</td>
-                        <td><span class="badge bg-${getBadgeColor(sheet.medicalConclusion)}">${sheet.medicalConclusion}</span></td>
-                        <td>
-                            <a href="/api/aptitude-sheets/${sheet.id}/pdf" target="_blank" class="btn btn-sm btn-outline-danger">
-                                📥 Descarcă PDF
-                            </a>
-                        </td>
-                    </tr>
-                `;
-                tableBody.innerHTML += row;
+                        <td class="ps-3">#${s.id}</td>
+                        <td>${s.employee ? s.employee.firstname + ' ' + s.employee.lastname : 'Șters'}</td>
+                        <td><small>${s.examType || '-'}</small></td>
+                        <td>${new Date(s.examDate).toLocaleDateString('ro-RO')}</td>
+                        <td><span class="badge ${getBadgeColor(s.medicalConclusion)}">${s.medicalConclusion}</span></td>
+                        <td><a href="/api/aptitude-sheets/${s.id}/pdf" target="_blank" class="btn btn-sm btn-danger">PDF</a></td>
+                    </tr>`;
             });
-        } catch (error) {
-            console.error('Error fetching sheets:', error);
-        }
+        } catch(err) { console.error(err); }
     }
 
-    function getBadgeColor(conclusion) {
-        if(conclusion.includes('APT')) return 'success';
-        if(conclusion.includes('CONDITIONAT')) return 'warning';
-        return 'danger';
+    function getBadgeColor(c) {
+        if (c === 'APT') return 'badge-apt';
+        if (c === 'APT CONDITIONAT') return 'badge-cond';
+        return 'badge-inapt';
     }
 
-    // Create new sheet
     document.getElementById('createSheetForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        const employeeId = document.getElementById('employeeSelect').value;
+        const empId = document.getElementById('employeeSelect').value;
+        if(!empId) { alert("Alege un angajat!"); return; }
+
         const sheetData = {
-            employee: { id: employeeId },
+            employee: { id: parseInt(empId) },
+            examType: document.getElementById('examType').value,
             examDate: document.getElementById('examDate').value,
             nextExamDate: document.getElementById('nextExamDate').value || null,
             medicalConclusion: document.getElementById('conclusion').value,
-            observations: document.getElementById('observations').value
+            observations: document.getElementById('observations').value || "Conform protocolului medical."
         };
 
+        console.log("Se trimit datele:", sheetData);
+
         try {
-            const response = await fetch(API_SHEETS, {
+            const res = await fetch(API_SHEETS, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(sheetData)
             });
 
-            if (response.ok) {
-                alert('Fisa creată cu succes!');
+            if (res.ok) {
+                alert('Fișa a fost salvată cu succes!');
                 document.getElementById('createSheetForm').reset();
+                document.getElementById('examDate').valueAsDate = new Date();
                 fetchSheets();
-            } else if (response.status === 401) { // Unauthorized
-                window.location.href = '/login.html';
-            } else if (response.status === 403) { // Forbidden
-                alert('Nu aveți permisiunea de a crea fișe de aptitudini.');
             } else {
-                alert('Eroare la crearea fisei.');
+                const errData = await res.json();
+                alert('Eroare server (500): ' + (errData.message || 'Verifică consola serverului.'));
             }
-        } catch (error) {
-            console.error('Error creating sheet:', error);
+        } catch (err) {
+            console.error(err);
+            alert('Eroare de rețea sau server indisponibil.');
         }
     });
 
-    // Initial load
     loadEmployees();
     fetchSheets();
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

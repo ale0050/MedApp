@@ -1,4 +1,5 @@
 package com.medmuncii.medapp.employee;
+
 import jakarta.persistence.*;
 import lombok.*;
 import com.medmuncii.medapp.company.Company;
@@ -8,8 +9,6 @@ import com.medmuncii.medapp.company.Company;
 @AllArgsConstructor
 @Table(name="employes")
 @NoArgsConstructor
-
-
 public class Employee {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -24,14 +23,15 @@ public class Employee {
     private String cnp;
 
     private String position;
+    private String workplace; // Adăugat pentru compatibilitate
     private String email;
     private String phone;
 
     @ManyToOne
     @JoinColumn(name = "company_id")
-    private Company company; // relație- firma
+    private Company company;
 
-    // Getters și Setters
+    // Getters și Setters explicite pentru siguranță
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -53,7 +53,9 @@ public class Employee {
     public String getPosition() { return position; }
     public void setPosition(String position) { this.position = position; }
 
+    public String getWorkplace() { return workplace; }
+    public void setWorkplace(String workplace) { this.workplace = workplace; }
+
     public Company getCompany() { return company; }
     public void setCompany(Company company) { this.company = company; }
-
 }

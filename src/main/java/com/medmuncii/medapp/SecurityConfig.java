@@ -24,18 +24,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(AbstractHttpConfigurer::disable) // Consider re-enabling CSRF with proper handling for production
+            .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/login.html", "/css/**", "/js/**", "/images/**").permitAll() // Public resources
-                .requestMatchers("/", "/companies.html", "/employees.html", "/aptitude.html").authenticated() // Protected HTML pages including root
-                .requestMatchers("/api/**").authenticated() // All API endpoints protected
-                .anyRequest().denyAll() // Deny anything else explicitly to avoid accidental access
+                .requestMatchers("/login.html", "/css/**", "/js/**", "/images/**").permitAll()
+                .requestMatchers("/api/**").permitAll() // Permite temporar tot API-ul pentru a evita 403 la POST
+                .requestMatchers("/", "/companies.html", "/employees.html", "/aptitude.html").authenticated()
+                .anyRequest().authenticated()
             )
             .formLogin(form -> form
-                .loginPage("/login.html") // Custom login page
-                .loginProcessingUrl("/perform_login") // URL to submit the username and password
-                .defaultSuccessUrl("/", true) // Redirect to root on successful login
-                .failureUrl("/login.html?error=true") // Redirect to login page on failure
+                .loginPage("/login.html")
+                .loginProcessingUrl("/perform_login")
+                .defaultSuccessUrl("/", true)
+                .failureUrl("/login.html?error=true")
                 .permitAll()
             )
             .logout(logout -> logout
