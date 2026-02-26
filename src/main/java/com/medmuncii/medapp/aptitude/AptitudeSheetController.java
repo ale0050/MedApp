@@ -40,6 +40,11 @@ public class AptitudeSheetController {
         return aptitudeSheetService.createSheet(sheet);
     }
 
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        aptitudeSheetRepository.deleteById(id);
+    }
+
     @GetMapping("/{id}/pdf")
     public org.springframework.http.ResponseEntity<byte[]> downloadPdf(@PathVariable Long id) {
         AptitudeSheet sheet = aptitudeSheetRepository.findById(id)

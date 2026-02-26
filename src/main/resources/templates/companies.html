@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>MedApp - Companii</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>body { padding-top: 60px; }</style>
 </head>
 <body>
@@ -21,9 +22,6 @@
         <li class="nav-item" sec:authorize="isAuthenticated()">
           <span class="nav-link text-white" th:text="'Salut, ' + ${#authentication.name}"></span>
         </li>
-        <li class="nav-item" sec:authorize="isAnonymous()">
-          <a class="btn btn-outline-light ms-2" href="/login.html">Login</a>
-        </li>
         <li class="nav-item" sec:authorize="isAuthenticated()">
           <form th:action="@{/perform_logout}" method="post" class="d-inline">
             <button type="submit" class="btn btn-outline-light ms-2">Logout</button>
@@ -37,34 +35,17 @@
 <div class="container mt-4">
     <h2 class="mb-4 text-primary">Gestionare Companii</h2>
 
-    <!-- Formular Adaugare -->
+    <!-- Formular Adaugare Companie -->
     <div class="card mb-4">
         <div class="card-header bg-primary text-white">Adaugă Companie Nouă</div>
         <div class="card-body">
             <form id="addCompanyForm" class="row g-3">
-                <div class="col-md-6">
-                    <label for="name" class="form-label">Nume Companie</label>
-                    <input type="text" class="form-control" id="name" required>
-                </div>
-                <div class="col-md-6">
-                    <label for="cui" class="form-label">CUI / CIF</label>
-                    <input type="text" class="form-control" id="cui" required>
-                </div>
-                <div class="col-12">
-                    <label for="address" class="form-label">Adresa</label>
-                    <input type="text" class="form-control" id="address">
-                </div>
-                <div class="col-md-6">
-                    <label for="phone" class="form-label">Telefon</label>
-                    <input type="text" class="form-control" id="phone">
-                </div>
-                <div class="col-md-6">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email">
-                </div>
-                <div class="col-12 text-end">
-                    <button type="submit" class="btn btn-success">Salvează Companie</button>
-                </div>
+                <div class="col-md-6"><label for="name" class="form-label">Nume Companie</label><input type="text" class="form-control" id="name" required></div>
+                <div class="col-md-6"><label for="cui" class="form-label">CUI / CIF</label><input type="text" class="form-control" id="cui" required></div>
+                <div class="col-12"><label for="address" class="form-label">Adresa</label><input type="text" class="form-control" id="address"></div>
+                <div class="col-md-6"><label for="phone" class="form-label">Telefon</label><input type="text" class="form-control" id="phone"></div>
+                <div class="col-md-6"><label for="email" class="form-label">Email</label><input type="email" class="form-control" id="email"></div>
+                <div class="col-12 text-end"><button type="submit" class="btn btn-success">Salvează Companie</button></div>
             </form>
         </div>
     </div>
@@ -78,42 +59,25 @@
         <div class="card-body">
             <table class="table table-striped table-hover">
                 <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nume</th>
-                        <th>CUI</th>
-                        <th>Adresa</th>
-                        <th>Contact</th>
-                        <th>Acțiuni</th>
-                    </tr>
+                    <tr><th>ID</th><th>Nume</th><th>CUI</th><th>Adresa</th><th>Contact</th><th>Acțiuni</th></tr>
                 </thead>
-                <tbody id="companiesTableBody">
-                </tbody>
+                <tbody id="companiesTableBody"></tbody>
             </table>
         </div>
     </div>
 </div>
 
-<!-- Modal Import -->
+<!-- Modal Import Excel -->
 <div class="modal fade" id="importModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Import Angajați - <span id="modalCompanyName"></span></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
+            <div class="modal-header"><h5 class="modal-title">Import Angajați - <span id="modalCompanyName"></span></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
             <form id="importForm" enctype="multipart/form-data">
                 <div class="modal-body">
                     <input type="hidden" id="importCompanyId">
-                    <div class="mb-3">
-                        <label for="excelFile" class="form-label">Alege fișierul Excel (.xlsx)</label>
-                        <input class="form-control" type="file" id="excelFile" accept=".xlsx" required>
-                    </div>
+                    <div class="mb-3"><label class="form-label">Alege fișierul Excel (.xlsx)</label><input class="form-control" type="file" id="excelFile" accept=".xlsx" required></div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anulează</button>
-                    <button type="submit" class="btn btn-primary">Încarcă</button>
-                </div>
+                <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anulează</button><button type="submit" class="btn btn-primary">Încarcă</button></div>
             </form>
         </div>
     </div>
@@ -123,32 +87,33 @@
 <div class="modal fade" id="employeesModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Angajați - <span id="employeesModalCompanyName"></span></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
+            <div class="modal-header"><h5 class="modal-title">Angajați - <span id="employeesModalCompanyName"></span></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
             <div class="modal-body">
-                <div class="mb-3">
-                    <input type="text" id="employeeSearch" class="form-control" placeholder="Caută după nume sau CNP...">
-                </div>
+                <input type="text" id="employeeSearch" class="form-control mb-3" placeholder="Caută după nume sau CNP...">
                 <table class="table table-sm table-striped">
-                    <thead>
-                        <tr>
-                            <th>Nume</th>
-                            <th>CNP</th>
-                            <th>Funcție</th>
-                            <th>Acțiune</th>
-                        </tr>
-                    </thead>
-                    <tbody id="employeesTableBody">
-                    </tbody>
+                    <thead><tr><th>Nume</th><th>CNP</th><th>Funcție</th><th>Acțiune</th></tr></thead>
+                    <tbody id="employeesTableBody"></tbody>
                 </table>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Scripts -->
+<!-- Modal Istoric Fișe -->
+<div class="modal fade" id="historyModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white"><h5 class="modal-title">Istoric Fișe - <span id="historyEmployeeName"></span></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <table class="table table-hover">
+                    <thead><tr><th>Data Examen</th><th>Tip Examen</th><th>Concluzie</th><th>Acțiune</th></tr></thead>
+                    <tbody id="historyTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     const API_URL = '/api/companies';
@@ -157,104 +122,126 @@
     async function fetchCompanies() {
         try {
             const response = await fetch(API_URL);
-            if (response.status === 401) {
-                window.location.href = '/login.html';
-                return;
-            }
+            if (response.status === 401) { window.location.href = '/login.html'; return; }
             allCompanies = await response.json();
             renderCompanies(allCompanies);
-        } catch (error) {
-            console.error('Error fetching companies:', error);
-        }
+        } catch (error) { console.error('Error:', error); }
     }
 
     function renderCompanies(companies) {
         const tableBody = document.getElementById('companiesTableBody');
         tableBody.innerHTML = '';
         companies.forEach(company => {
-            const row = `
+            tableBody.innerHTML += `
                 <tr>
                     <td>${company.id}</td>
                     <td><strong>${company.name}</strong></td>
                     <td>${company.cui}</td>
                     <td>${company.address || '-'}</td>
-                    <td>${company.phone || '-'} <br> <small>${company.email || ''}</small></td>
+                    <td>${company.phone || '-'}</td>
                     <td>
                         <div class="btn-group">
-                            <button class="btn btn-sm btn-outline-primary" onclick="openImportModal(${company.id}, '${company.name.replace(/'/g, "\\'")}')">
-                                Import
-                            </button>
-                            <button class="btn btn-sm btn-outline-success" onclick="viewEmployees(${company.id}, '${company.name.replace(/'/g, "\\'")}')">
-                                Fișe Angajați
-                            </button>
+                            <button class="btn btn-sm btn-outline-primary" onclick="openImportModal(${company.id}, '${company.name.replace(/'/g, "\\'")}')">Import</button>
+                            <button class="btn btn-sm btn-outline-success" onclick="viewEmployees(${company.id}, '${company.name.replace(/'/g, "\\'")}')">Fișe</button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteCompany(${company.id}, '${company.name.replace(/'/g, "\\'")}')">Șterge</button>
                         </div>
                     </td>
-                </tr>
-            `;
-            tableBody.innerHTML += row;
+                </tr>`;
         });
     }
 
-    // Filtrare companii
+    async function deleteCompany(id, name) {
+        if (confirm(`Sunteți sigur că doriți să ștergeți compania "${name}"? Acest lucru va șterge și toți angajații ei.`)) {
+            try {
+                const response = await fetch(`/api/companies/${id}`, { method: 'DELETE' });
+                if (response.ok) { fetchCompanies(); }
+            } catch (error) { console.error('Error:', error); }
+        }
+    }
+
     document.getElementById('companySearch').addEventListener('input', (e) => {
         const term = e.target.value.toLowerCase();
-        const filtered = allCompanies.filter(c => 
-            c.name.toLowerCase().includes(term) || c.cui.toLowerCase().includes(term)
-        );
-        renderCompanies(filtered);
+        renderCompanies(allCompanies.filter(c => c.name.toLowerCase().includes(term) || c.cui.toLowerCase().includes(term)));
     });
 
     async function viewEmployees(id, name) {
         document.getElementById('employeesModalCompanyName').innerText = name;
         const tableBody = document.getElementById('employeesTableBody');
         tableBody.innerHTML = '<tr><td colspan="4" class="text-center">Se încarcă...</td></tr>';
-        
         new bootstrap.Modal(document.getElementById('employeesModal')).show();
 
         try {
             const response = await fetch(`/api/employees/company/${id}`);
             const employees = await response.json();
-            tableBody.innerHTML = '';
-
-            const renderEmpList = (list) => {
-                tableBody.innerHTML = '';
-                if (list.length === 0) {
-                    tableBody.innerHTML = '<tr><td colspan="4" class="text-center">Niciun angajat găsit.</td></tr>';
-                    return;
-                }
+            
+            const renderList = (list) => {
+                tableBody.innerHTML = list.length === 0 ? '<tr><td colspan="4" class="text-center">Niciun angajat.</td></tr>' : '';
                 list.forEach(emp => {
-                    const row = `
+                    tableBody.innerHTML += `
                         <tr>
                             <td>${emp.lastname} ${emp.firstname}</td>
                             <td>${emp.cnp}</td>
                             <td>${emp.position}</td>
                             <td>
-                                <a href="/aptitude.html?employeeId=${emp.id}&companyId=${id}" class="btn btn-sm btn-primary">
-                                    Creează Fișă
-                                </a>
+                                <div class="btn-group">
+                                    <a href="/aptitude.html?employeeId=${emp.id}&companyId=${id}" class="btn btn-sm btn-primary">Creează</a>
+                                    <button onclick="viewHistory(${emp.id}, '${emp.lastname.replace(/'/g, "\\'")} ${emp.firstname.replace(/'/g, "\\'")}')" class="btn btn-sm btn-info text-white">Istoric</button>
+                                    <button onclick="deleteEmployee(${emp.id}, '${emp.lastname.replace(/'/g, "\\'")} ${emp.firstname.replace(/'/g, "\\'")}', ${id}, '${name}')" class="btn btn-sm btn-danger">Șterge</button>
+                                </div>
                             </td>
-                        </tr>
-                    `;
-                    tableBody.innerHTML += row;
+                        </tr>`;
                 });
             };
-
-            renderEmpList(employees);
-
-            // Filtrare angajati in modal
+            renderList(employees);
             document.getElementById('employeeSearch').oninput = (e) => {
                 const term = e.target.value.toLowerCase();
-                const filtered = employees.filter(emp => 
-                    emp.lastname.toLowerCase().includes(term) || 
-                    emp.firstname.toLowerCase().includes(term) || 
-                    (emp.cnp && emp.cnp.includes(term))
-                );
-                renderEmpList(filtered);
+                renderList(employees.filter(emp => emp.lastname.toLowerCase().includes(term) || emp.firstname.toLowerCase().includes(term) || (emp.cnp && emp.cnp.includes(term))));
             };
+        } catch (error) { console.error('Error:', error); }
+    }
 
-        } catch (error) {
-            console.error('Error:', error);
-            tableBody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Eroare la încărcare.</td></tr>';
+    async function deleteEmployee(id, name, companyId, companyName) {
+        if (confirm(`Ștergeți angajatul "${name}" și istoricul acestuia?`)) {
+            try {
+                const response = await fetch(`/api/employees/${id}`, { method: 'DELETE' });
+                if (response.ok) { viewEmployees(companyId, companyName); }
+            } catch (error) { console.error('Error:', error); }
+        }
+    }
+
+    async function viewHistory(employeeId, name) {
+        document.getElementById('historyEmployeeName').innerText = name;
+        const tableBody = document.getElementById('historyTableBody');
+        tableBody.innerHTML = '<tr><td colspan="4" class="text-center">Se încarcă...</td></tr>';
+        new bootstrap.Modal(document.getElementById('historyModal')).show();
+
+        try {
+            const response = await fetch(`/api/aptitude-sheets/employee/${employeeId}`);
+            const sheets = await response.json();
+            tableBody.innerHTML = sheets.length === 0 ? '<tr><td colspan="4" class="text-center">Nicio fișă în istoric.</td></tr>' : '';
+            sheets.sort((a,b) => new Date(b.examDate) - new Date(a.examDate)).forEach(s => {
+                tableBody.innerHTML += `
+                    <tr>
+                        <td>${new Date(s.examDate).toLocaleDateString('ro-RO')}</td>
+                        <td>${s.examType}</td>
+                        <td><strong>${s.medicalConclusion}</strong></td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="/api/aptitude-sheets/${s.id}/pdf" target="_blank" class="btn btn-sm btn-danger">PDF</a>
+                                <button onclick="deleteSheet(${s.id}, ${employeeId}, '${name}')" class="btn btn-sm btn-outline-danger">X</button>
+                            </div>
+                        </td>
+                    </tr>`;
+            });
+        } catch (error) { console.error('Error:', error); }
+    }
+
+    async function deleteSheet(id, employeeId, name) {
+        if (confirm(`Ștergeți această fișă din istoric?`)) {
+            try {
+                const response = await fetch(`/api/aptitude-sheets/${id}`, { method: 'DELETE' });
+                if (response.ok) { viewHistory(employeeId, name); }
+            } catch (error) { console.error('Error:', error); }
         }
     }
 
@@ -264,76 +251,34 @@
         new bootstrap.Modal(document.getElementById('importModal')).show();
     }
 
-    // Adăugare Companie
     document.getElementById('addCompanyForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const companyData = {
-            name: document.getElementById('name').value,
-            cui: document.getElementById('cui').value,
-            address: document.getElementById('address').value,
-            phone: document.getElementById('phone').value,
+            name: document.getElementById('name').value, cui: document.getElementById('cui').value,
+            address: document.getElementById('address').value, phone: document.getElementById('phone').value,
             email: document.getElementById('email').value
         };
-
         try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(companyData)
-            });
-
-            if (response.ok) {
-                alert('Companie adăugată cu succes!');
-                document.getElementById('addCompanyForm').reset();
-                fetchCompanies();
-            } else {
-                alert('Eroare la adăugare: ' + response.status);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Eroare de conexiune.');
-        }
+            const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(companyData) });
+            if (response.ok) { alert('Succes!'); document.getElementById('addCompanyForm').reset(); fetchCompanies(); }
+        } catch (error) { console.error('Error:', error); }
     });
 
-    // Import Excel
     document.getElementById('importForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const companyId = document.getElementById('importCompanyId').value;
-        const fileInput = document.getElementById('excelFile');
         const formData = new FormData();
-        formData.append('file', fileInput.files[0]);
-
+        formData.append('file', document.getElementById('excelFile').files[0]);
         try {
-            const response = await fetch(`/api/employees/import/${companyId}`, {
-                method: 'POST',
-                body: formData
-            });
-
-            if (response.ok) {
-                alert('Angajați importați cu succes!');
-                bootstrap.Modal.getInstance(document.getElementById('importModal')).hide();
-                fileInput.value = '';
-            } else {
-                alert('Eroare la importarea angajaților.');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Eroare de rețea.');
-        }
+            const response = await fetch(`/api/employees/import/${document.getElementById('importCompanyId').value}`, { method: 'POST', body: formData });
+            if (response.ok) { alert('Import reușit!'); bootstrap.Modal.getInstance(document.getElementById('importModal')).hide(); }
+        } catch (error) { console.error('Error:', error); }
     });
 
     window.onload = () => {
         const params = new URLSearchParams(window.location.search);
         const autoOpen = params.get('openCompanyId');
-        if (autoOpen) {
-            // Găsim numele companiei în listă după ce se încarcă
-            fetchCompanies().then(() => {
-                const comp = allCompanies.find(c => c.id == autoOpen);
-                if (comp) viewEmployees(comp.id, comp.name);
-            });
-        } else {
-            fetchCompanies();
-        }
+        if (autoOpen) { fetchCompanies().then(() => { const comp = allCompanies.find(c => c.id == autoOpen); if (comp) viewEmployees(comp.id, comp.name); }); }
+        else { fetchCompanies(); }
     };
 </script>
 </body>

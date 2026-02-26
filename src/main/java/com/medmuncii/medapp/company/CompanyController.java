@@ -22,4 +22,9 @@ public class CompanyController {
     public Company create(@RequestBody Company company) {
         return companyService.createCompany(company);
     }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        companyService.deleteCompany(id);
+    }
 }

@@ -29,6 +29,7 @@ public class Employee {
 
     @ManyToOne
     @JoinColumn(name = "company_id")
+    @org.hibernate.annotations.OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
     private Company company;
 
 

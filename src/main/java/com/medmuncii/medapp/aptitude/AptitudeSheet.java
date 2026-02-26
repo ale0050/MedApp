@@ -20,6 +20,7 @@ public class AptitudeSheet {
 
     @ManyToOne
     @JoinColumn(name = "employee_id", nullable = false)
+    @org.hibernate.annotations.OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
     private Employee employee;
 
     @Column(name = "exam_type", length = 500)
