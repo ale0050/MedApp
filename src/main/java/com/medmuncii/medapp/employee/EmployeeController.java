@@ -1,6 +1,8 @@
 package com.medmuncii.medapp.employee;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -26,5 +28,16 @@ public class EmployeeController {
     @PostMapping
     public Employee createEmployee(@RequestBody Employee employee) {
         return employeeService.createEmployee(employee);
+    }
+
+    @GetMapping("/{id}")
+    public Employee getEmployeeById(@PathVariable Long id) {
+        return employeeService.getEmployeeById(id)
+                .orElseThrow(() -> new RuntimeException("Angajatul nu a fost gasit"));
+    }
+
+    @PostMapping("/import/{companyId}")
+    public void importEmployees(@PathVariable Long companyId, @RequestParam("file") MultipartFile file) throws IOException {
+        employeeService.importEmployeesFromExcel(companyId, file);
     }
 }

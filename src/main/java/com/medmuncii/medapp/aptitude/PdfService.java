@@ -81,7 +81,7 @@ public class PdfService {
 
         Employee emp = sheet.getEmployee();
 
-        // --- 1. HEADER CLINICA ---
+
         Paragraph cp = new Paragraph();
         cp.setLeading(9f);
         cp.add(new Chunk("CABINET MEDICAL MEDICINA MUNCII\n", clinicBoldFont));
@@ -90,13 +90,13 @@ public class PdfService {
         cp.add(new Chunk("Web: www.medicalprevent.ro | Orar: L-V: 09:00-17:00, S: 09:00-12:00", clinicFont));
         containerCell.addElement(cp);
 
-        // --- 2. LINIE NEAGRA ---
+
         LineSeparator ls = new LineSeparator();
         ls.setLineWidth(1f);
         ls.setOffset(1f);
         containerCell.addElement(new Chunk(ls));
 
-        // --- 3. TIP EXAMINARE (Orizontal - Perfect Aliniat) ---
+
         String examType = (sheet.getExamType() != null) ? sheet.getExamType() : "";
         PdfPTable typeTable = new PdfPTable(5);
         typeTable.setWidthPercentage(100);
@@ -112,14 +112,14 @@ public class PdfService {
         addPerfectCheckCell(typeTable, "Alte", examType.equals("Alte"), labelFont, 0);
         containerCell.addElement(typeTable);
 
-        // --- 4. TITLU CENTRAL ---
+
         String nrFisa = (sheet.getId() != null ? sheet.getId().toString() : "____");
         Paragraph title = new Paragraph("\nMEDICINA MUNCII FIȘĂ DE APTITUDINE NR: " + nrFisa, titleFont);
         title.setAlignment(Element.ALIGN_CENTER);
         title.setSpacingAfter(6);
         containerCell.addElement(title);
 
-        // --- 5. SECTIUNE UNITATE ---
+
         PdfPTable unitTable = new PdfPTable(2);
         unitTable.setWidthPercentage(100);
         try { unitTable.setWidths(new float[]{20f, 80f}); } catch (Exception e) {}
@@ -131,7 +131,7 @@ public class PdfService {
         addLabelValueRow(unitTable, "Tel / Fax:", companyPhone, labelFont, valueFont);
         containerCell.addElement(unitTable);
 
-        // --- 6. CHENAR DATE ANGAJAT (Condensat, Prenume Aproape) ---
+
         PdfPTable empBoxTable = new PdfPTable(1);
         empBoxTable.setWidthPercentage(100);
         empBoxTable.setSpacingBefore(3);
@@ -158,7 +158,7 @@ public class PdfService {
         empBoxTable.addCell(empBoxCell);
         containerCell.addElement(empBoxTable);
 
-        // --- 7. AVIZ MEDICAL ȘI RECOMANDĂRI ---
+
         PdfPTable footerGrid = new PdfPTable(2);
         footerGrid.setWidthPercentage(100);
         footerGrid.setSpacingBefore(10);
@@ -240,14 +240,14 @@ public class PdfService {
 
         PdfPTable subTable = new PdfPTable(2);
         try { 
-            subTable.setWidths(new float[]{22f, 78f}); // Latime marita pentru checkbox ca sa nu faca wrap textul langa el
+            subTable.setWidths(new float[]{22f, 78f});
         } catch (Exception e) {}
         subTable.setWidthPercentage(100);
 
         PdfPCell boxCell = new PdfPCell(new Phrase(checked ? "[ X ]" : "[   ]", font));
         boxCell.setBorder(Rectangle.NO_BORDER);
         boxCell.setPadding(0);
-        boxCell.setNoWrap(true); // OBLIGATORIU: [ ] nu se rupe niciodata de text
+        boxCell.setNoWrap(true);
         boxCell.setVerticalAlignment(Element.ALIGN_TOP);
         subTable.addCell(boxCell);
 

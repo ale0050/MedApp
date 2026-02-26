@@ -13,6 +13,6 @@ public class HomeController {
         if (authentication == null || !authentication.isAuthenticated()) {
             return "redirect:/login.html";
         }
-        return "index"; // Or "redirect:/index.html" if you prefer
+        return "index";
     }
 }

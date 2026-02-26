@@ -37,7 +37,7 @@ public class AptitudeSheet {
     @Column(name = "observations", length = 1000)
     private String observations;
 
-    // Getters și Setters manuali
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

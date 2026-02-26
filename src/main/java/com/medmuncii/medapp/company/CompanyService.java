@@ -17,7 +17,7 @@ public class CompanyService {
     }
 
     public Company createCompany(Company company) {
-        // aici poți adăuga validări sau reguli business
+
         return companyRepository.save(company);
     }
 }

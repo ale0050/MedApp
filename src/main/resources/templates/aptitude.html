@@ -101,16 +101,30 @@
     document.getElementById('examDate').valueAsDate = new Date();
 
     async function loadEmployees() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const employeeIdFromUrl = urlParams.get('employeeId');
+
         try {
             const res = await fetch(API_EMPLOYEES);
             const data = await res.json();
             const select = document.getElementById('employeeSelect');
+            
             data.forEach(e => {
                 const opt = document.createElement('option');
                 opt.value = e.id;
-                opt.textContent = `${e.firstname} ${e.lastname} (${e.cnp || ''})`;
+                opt.textContent = `${e.lastname} ${e.firstname} (${e.cnp || ''})`;
+                if (employeeIdFromUrl && e.id == employeeIdFromUrl) {
+                    opt.selected = true;
+                }
                 select.appendChild(opt);
             });
+
+            // Setează automat data următoare peste 1 an
+            const today = new Date();
+            const nextYear = new Date();
+            nextYear.setFullYear(today.getFullYear() + 1);
+            document.getElementById('nextExamDate').valueAsDate = nextYear;
+
         } catch(err) { console.error(err); }
     }
 
@@ -166,9 +180,16 @@
 
             if (res.ok) {
                 alert('Fișa a fost salvată cu succes!');
-                document.getElementById('createSheetForm').reset();
-                document.getElementById('examDate').valueAsDate = new Date();
-                fetchSheets();
+                const urlParams = new URLSearchParams(window.location.search);
+                const companyId = urlParams.get('companyId');
+                
+                if (companyId) {
+                    window.location.href = `/companies.html?openCompanyId=${companyId}`;
+                } else {
+                    document.getElementById('createSheetForm').reset();
+                    document.getElementById('examDate').valueAsDate = new Date();
+                    fetchSheets();
+                }
             } else {
                 const errData = await res.json();
                 alert('Eroare server (500): ' + (errData.message || 'Verifică consola serverului.'));

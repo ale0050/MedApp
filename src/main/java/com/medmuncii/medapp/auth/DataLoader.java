@@ -22,7 +22,6 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Create roles if they don't exist
         Role adminRole = roleRepository.findByName("ROLE_ADMIN").orElseGet(() -> {
             Role role = new Role();
             role.setName("ROLE_ADMIN");
@@ -38,18 +37,18 @@ public class DataLoader implements CommandLineRunner {
         // Create or update a default admin user
         User adminUser = userRepository.findByUsername("admin").orElse(new User());
         adminUser.setUsername("admin");
-        adminUser.setPassword(passwordEncoder.encode("admin")); // Ensure password is always encoded
+        adminUser.setPassword(passwordEncoder.encode("admin"));
         Set<Role> adminRoles = new HashSet<>();
         adminRoles.add(adminRole);
-        adminRoles.add(userRole); // Admin also has user roles
+        adminRoles.add(userRole);
         adminUser.setRoles(adminRoles);
         userRepository.save(adminUser);
 
-        // Create a default regular user if not exists
+
         if (userRepository.findByUsername("user").isEmpty()) {
             User regularUser = new User();
             regularUser.setUsername("user");
-            regularUser.setPassword(passwordEncoder.encode("user")); // Encoded password
+            regularUser.setPassword(passwordEncoder.encode("user"));
             Set<Role> userRoles = new HashSet<>();
             userRoles.add(userRole);
             regularUser.setRoles(userRoles);

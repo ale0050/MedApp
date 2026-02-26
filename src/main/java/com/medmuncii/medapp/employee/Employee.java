@@ -23,7 +23,7 @@ public class Employee {
     private String cnp;
 
     private String position;
-    private String workplace; // Adăugat pentru compatibilitate
+    private String workplace;
     private String email;
     private String phone;
 
@@ -31,7 +31,7 @@ public class Employee {
     @JoinColumn(name = "company_id")
     private Company company;
 
-    // Getters și Setters explicite pentru siguranță
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
