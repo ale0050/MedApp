@@ -264,6 +264,64 @@
         new bootstrap.Modal(document.getElementById('importModal')).show();
     }
 
+    // Adăugare Companie
+    document.getElementById('addCompanyForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const companyData = {
+            name: document.getElementById('name').value,
+            cui: document.getElementById('cui').value,
+            address: document.getElementById('address').value,
+            phone: document.getElementById('phone').value,
+            email: document.getElementById('email').value
+        };
+
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(companyData)
+            });
+
+            if (response.ok) {
+                alert('Companie adăugată cu succes!');
+                document.getElementById('addCompanyForm').reset();
+                fetchCompanies();
+            } else {
+                alert('Eroare la adăugare: ' + response.status);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Eroare de conexiune.');
+        }
+    });
+
+    // Import Excel
+    document.getElementById('importForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const companyId = document.getElementById('importCompanyId').value;
+        const fileInput = document.getElementById('excelFile');
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+
+        try {
+            const response = await fetch(`/api/employees/import/${companyId}`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                alert('Angajați importați cu succes!');
+                bootstrap.Modal.getInstance(document.getElementById('importModal')).hide();
+                fileInput.value = '';
+            } else {
+                alert('Eroare la importarea angajaților.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Eroare de rețea.');
+        }
+    });
+
     window.onload = () => {
         const params = new URLSearchParams(window.location.search);
         const autoOpen = params.get('openCompanyId');
